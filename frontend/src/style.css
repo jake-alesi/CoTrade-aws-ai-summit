@@ -1,0 +1,163 @@
+:root { 
+  --bg: #0b0f14; 
+  --card: #121823; 
+  --text: #e7edf3; 
+  --muted: #9db0c6; 
+  --ok: #1db954; 
+  --warn: #ffb020; 
+  --bad: #ef4444; 
+}
+
+* { 
+  box-sizing: border-box; 
+}
+
+html, body, #root { 
+  height: 100%; 
+  margin: 0; 
+  background: var(--bg); 
+  color: var(--text); 
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji; 
+}
+
+.container { 
+  max-width: 980px; 
+  margin: 0 auto; 
+  padding: 20px; 
+}
+
+.header { 
+  display: flex; 
+  align-items: center; 
+  justify-content: space-between; 
+  gap: 12px; 
+  margin-bottom: 16px; 
+}
+
+.h1 { 
+  font-size: 22px; 
+  font-weight: 700; 
+}
+
+.row { 
+  display: flex; 
+  gap: 12px; 
+  flex-wrap: wrap; 
+}
+
+.card { 
+  background: var(--card); 
+  border: 1px solid #1c2736; 
+  border-radius: 12px; 
+  padding: 14px; 
+}
+
+.input, textarea { 
+  width: 100%; 
+  background: #0e141d; 
+  border: 1px solid #253247; 
+  color: var(--text); 
+  border-radius: 8px; 
+  padding: 10px 12px; 
+}
+
+.button { 
+  background: #223047; 
+  border: 1px solid #2f435e; 
+  color: var(--text); 
+  border-radius: 10px; 
+  padding: 10px 14px; 
+  cursor: pointer; 
+}
+
+.button:hover { 
+  filter: brightness(1.1); 
+}
+
+.badge { 
+  display: inline-flex; 
+  align-items: center; 
+  gap: 6px; 
+  padding: 3px 8px; 
+  border-radius: 999px; 
+  font-size: 12px; 
+  border: 1px solid #2e3f57; 
+}
+
+.badge.ok { 
+  background: rgba(29,185,84,.1); 
+  border-color: #1db954; 
+}
+
+.badge.warn { 
+  background: rgba(255,176,32,.1); 
+  border-color: #ffb020; 
+}
+
+.badge.bad { 
+  background: rgba(239,68,68,.1); 
+  border-color: #ef4444; 
+}
+
+.grid { 
+  display: grid; 
+  grid-template-columns: 1fr; 
+  gap: 12px; 
+}
+
+@media (min-width: 900px){ 
+  .grid { 
+    grid-template-columns: 1fr 1fr; 
+  } 
+}
+
+.trade { 
+  display: grid; 
+  grid-template-columns: 1fr auto; 
+  gap: 8px; 
+  align-items: start; 
+}
+
+.small { 
+  color: var(--muted); 
+  font-size: 12px; 
+}
+
+.title { 
+  font-weight: 600; 
+}
+
+.kv { 
+  display: grid; 
+  grid-template-columns: 120px 1fr; 
+  gap: 6px; 
+  font-size: 14px; 
+}
+
+.sep { 
+  height: 1px; 
+  background: #1c2736; 
+  margin: 8px 0; 
+}
+
+.notice { 
+  border-left: 4px solid #2f435e; 
+  padding-left: 10px; 
+}
+
+select { 
+  background: #0e141d; 
+  border: 1px solid #253247; 
+  color: var(--text); 
+  border-radius: 8px; 
+  padding: 10px 12px; 
+}
+
+input[type="checkbox"] { 
+  width: auto; 
+  margin-right: 8px; 
+}
+
+input[type="number"] { 
+  width: 100%; 
+}
