@@ -34,8 +34,8 @@ if not AWS_BEARER_TOKEN:
 
 bedrock = boto3.client(
     "bedrock-runtime",
-    aws_access_key_id="",  # leave empty
-    aws_secret_access_key="",  # leave empty
+    aws_access_key_id=AWS_BEARER_TOKEN, 
+    aws_secret_access_key=AWS_BEARER_TOKEN_S, 
     region_name="us-east-1",
     aws_session_token=AWS_BEARER_TOKEN
 )
