@@ -193,7 +193,7 @@ function NotificationPanel({ trades, analyses, preferences }: {
       <div className="title">🚨 Trade Alerts ({buyTrades.length})</div>
       <div className="small">Members with committee alignment are trading relevant stocks</div>
       
-      {buyTrades.map((trade, i) => {
+      {buyTrades.map((trade) => {
         const analysis = analyses[trades.indexOf(trade)];
         return (
           <div key={trade.id} style={{ marginTop: '8px' }}>
@@ -216,7 +216,7 @@ function App() {
   const [analyses, setAnalyses] = useState<Analysis[]>([]);
   const [feedUrl, setFeedUrl] = useState('');
   const [jsonInput, setJsonInput] = useState('');
-  const [useSample, setUseSample] = useState(false);
+  const [useSample, setUseSample] = useState(true);
   const [preferences, setPreferences] = useState<UserPreferences>({
     budget: 10000,
     confidenceThreshold: 60,
@@ -227,7 +227,7 @@ function App() {
   });
   
   const feedUrlFromEnv = import.meta.env.VITE_TRADES_FEED_URL;
-  const defaultBackendUrl = 'http://localhost:5002/api/trades';
+  const defaultBackendUrl = 'http://localhost:5001/api/trades';
   const { data: polledData, loading, error } = usePoll({ 
     url: feedUrl || feedUrlFromEnv || defaultBackendUrl,
     enabled: !useSample
