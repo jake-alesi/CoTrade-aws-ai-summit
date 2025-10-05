@@ -5,13 +5,16 @@ import pandas as pd
 from datetime import datetime
 import csv
 from collections import defaultdict
-import openai
+import boto3
 import os
+import json
 
 app = Flask(__name__)
 CORS(app)
 
+# -------------------------------
 # Load person_committees.csv
+# -------------------------------
 person_committees = defaultdict(list)
 person_chamber = {}
 with open("person_committees.csv", "r") as f:
@@ -22,11 +25,26 @@ with open("person_committees.csv", "r") as f:
         person_committees[name] = committees
         person_chamber[name] = row.get("Chamber", "")
 
-# OpenAI key
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# -------------------------------
+# AWS Bedrock Runtime client
+# -------------------------------
+AWS_BEARER_TOKEN = os.getenv("AWS_BEARER_TOKEN_BEDROCK")
+if not AWS_BEARER_TOKEN:
+    raise Exception("Please set AWS_BEARER_TOKEN_BEDROCK environment variable")
 
-def score_trade_with_llm(trade):
-    """Call LLM to score trade"""
+bedrock = boto3.client(
+    "bedrock-runtime",
+    aws_access_key_id="",  # leave empty
+    aws_secret_access_key="",  # leave empty
+    region_name="us-east-1",
+    aws_session_token=AWS_BEARER_TOKEN
+)
+
+# -------------------------------
+# LLM trade scoring function
+# -------------------------------
+def score_trade_with_llm(trade, model_id="anthropic.claude-instant-v1"):
+    """Call AWS Bedrock LLM to score a trade"""
     member = trade["member"]
     ticker = trade["ticker"]
     company = trade["company"]
@@ -53,18 +71,21 @@ weighted_average, committee_alignment, past_year_portfolio_performance, committe
 """
 
     try:
-        response = openai.ChatCompletion.create(
-            model="gpt-4",
-            messages=[
-                {"role": "system", "content": "You are an expert financial and political analyst."},
-                {"role": "user", "content": prompt}
-            ],
-            temperature=0
+        response = bedrock.invoke_model(
+            modelId=model_id,
+            contentType="application/json",
+            body=json.dumps({"inputText": prompt})
         )
-        content = response.choices[0].message["content"]
-        import json
-        result = json.loads(content)
+
+        body_bytes = response['body'].read()
+        content_str = body_bytes.decode("utf-8")
+
+        # Bedrock may wrap the output differently depending on model
+        # Attempt to parse JSON directly
+        result = json.loads(content_str)
+
     except Exception as e:
+        print(f"LLM scoring error for {member} - {ticker}: {e}")
         result = {
             "weighted_average": None,
             "committee_alignment": None,
@@ -73,12 +94,14 @@ weighted_average, committee_alignment, past_year_portfolio_performance, committe
             "matched_committee": None
         }
 
-    # Add basic info
+    # Attach basic trade info
     result.update({"member": member, "ticker": ticker, "company": company})
     return result
 
+# -------------------------------
+# Convert scraped data to frontend format
+# -------------------------------
 def convert_to_frontend_format(df):
-    """Convert scraped data to frontend Trade format"""
     trades = []
     for _, row in df.iterrows():
         try:
@@ -111,6 +134,9 @@ def convert_to_frontend_format(df):
         trades.append(trade)
     return trades
 
+# -------------------------------
+# Flask route
+# -------------------------------
 @app.route('/api/trades')
 def get_trades():
     try:
@@ -147,5 +173,8 @@ def get_trades():
             "count": 0
         })
 
+# -------------------------------
+# Run Flask
+# -------------------------------
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=5001)
