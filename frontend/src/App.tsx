@@ -216,7 +216,7 @@ function App() {
   const [analyses, setAnalyses] = useState<Analysis[]>([]);
   const [feedUrl, setFeedUrl] = useState('');
   const [jsonInput, setJsonInput] = useState('');
-  const [useSample, setUseSample] = useState(true);
+  const [useSample, setUseSample] = useState(false);
   const [preferences, setPreferences] = useState<UserPreferences>({
     budget: 10000,
     confidenceThreshold: 60,
